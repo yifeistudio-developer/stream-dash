@@ -16,4 +16,12 @@
    go get google.golang.org/protobuf
 
 2. 生成 Protobuf 和 gRPC 代码：
-3. 
+   ```bash
+   cd ../fox
+   protoc --go_out=../swift/proto --go_opt=paths=source_relative --go-grpc_out=../swift/proto --go-grpc_opt=paths=source_relative data.proto
+   ```
+## 运行
+
+```bash
+  go run main.go
+```
