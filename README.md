@@ -1,6 +1,6 @@
-# StreamDash
+# Stream-Dash
 
-**StreamDash** 是一款实时数据仪表盘生成器，旨在让用户通过简单配置即可从流式或静态数据源生成动态可视化仪表盘。它结合了高性能通信、分布式流处理和现代前端技术，追求各技术栈在特定领域的极致发挥。
+**Stream-Dash** 是一款实时数据仪表盘生成器，旨在让用户通过简单配置即可从流式或静态数据源生成动态可视化仪表盘。它结合了高性能通信、分布式流处理和现代前端技术，追求各技术栈在特定领域的极致发挥。
 
 ## 项目概述
 
@@ -83,5 +83,60 @@ StreamDash/
 
 1. **克隆仓库**:
    ```bash
-   git clone https://github.com/your-repo/StreamDash.git
-   cd StreamDash
+   git clone https://github.com/yifeistudio-developer/stream-dash.git
+   cd stream-dash
+
+2. **Swift (Go):**
+    ```bash
+    cd swift  
+    go mod init streamdash/swift  
+    go get google.golang.org/grpc  
+    go get google.golang.org/protobuf
+
+3. **Otter (Flink):**
+    ```bash
+    cd otter  
+    ./gradlew build  
+
+4. **Hawk (Vue 3):**
+    ```bash
+    cd hawk  
+    npm install  
+
+5. **Beaver (Kafka):**
+    - 下载 Kafka 并解压。
+    - 配置 beaver/kafka-config.yaml（参考 Kafka 文档）。
+
+6. **Fox (Protobuf):**
+    ```bash
+    cd fox  
+    protoc --go_out=../swift/proto --java_out=../otter/src/main/java data.proto  
+
+## 安装步骤
+
+### 运行指南
+
+1. 启动 Kafka (Beaver)
+    ```bash
+    cd kafka_2.13-3.6.1  
+    bin/zookeeper-server-start.sh config/zookeeper.properties &  
+    bin/kafka-server-start.sh beaver/kafka-config.yaml &
+
+2. 运行 Swift (通信层)
+    ```bash
+    cd swift  
+    go run main.go
+
+3. 运行 Otter (Flink 处理)
+    ```bash
+    cd otter  
+    ./gradlew run  
+    # 或提交到 Flink 集群  
+    flink run -c org.example.streamdash.Main build/libs/otter-standalone-0.1-SNAPSHOT.jar 
+
+4. 运行 Hawk (前端)
+    ```bash
+    cd hawk  
+    npm run dev  
+
+- 访问 http://localhost:5173 查看仪表盘。
