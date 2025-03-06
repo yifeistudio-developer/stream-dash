@@ -1,0 +1,19 @@
+syntax = "proto3";
+package streamdash;
+
+option go_package = "./proto";
+option java_package = "com.yifeistudio.streamdash.proto";
+option java_outer_classname = "DataProto";
+
+message DataPoint {
+  string timestamp = 1;
+  int32 value = 2;
+}
+
+message DataStream {
+  repeated DataPoint points = 1;
+}
+
+service StreamService {
+  rpc StreamData (stream DataStream) returns (stream DataStream) {}
+}
