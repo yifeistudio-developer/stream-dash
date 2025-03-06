@@ -19,12 +19,18 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@improbable-eng/grpc-web": "^0.15.0",
+    "echarts": "^5.6.0",
+    "google-protobuf": "^3.21.4",
     "pinia": "^3.0.1",
+    "protobufjs": "^7.4.0",
     "vue": "^3.5.13",
+    "vue-echarts": "^7.0.3",
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.0",
+    "@types/google-protobuf": "^3",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.13.4",
     "@vitejs/plugin-vue": "^5.2.1",
