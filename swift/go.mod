@@ -3,6 +3,7 @@ module swift
 go 1.23
 
 require (
+	github.com/confluentinc/confluent-kafka-go/v2 v2.8.0
 	google.golang.org/grpc v1.71.0
 	google.golang.org/protobuf v1.36.5
 )
