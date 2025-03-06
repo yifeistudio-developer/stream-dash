@@ -2,7 +2,7 @@ syntax = "proto3";
 package streamdash;
 
 option go_package = "./proto";
-option java_package = "com.yifeistudio.streamdash.proto";
+option java_package = "com.yifeistudio.otter.proto";
 option java_outer_classname = "DataProto";
 
 message DataPoint {
