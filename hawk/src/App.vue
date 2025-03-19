@@ -12,7 +12,8 @@ import { use } from 'echarts/core';
 import { LineChart } from 'echarts/charts';
 import { GridComponent, TooltipComponent } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
-import * as protobuf from 'protobufjs';
+import { grpc } from '@improbable-eng/grpc-web';
+import protobuf from 'protobufjs';
 
 use([LineChart, GridComponent, TooltipComponent, CanvasRenderer]);
 
@@ -23,31 +24,59 @@ const chartOption = ref({
   tooltip: { trigger: 'axis' }
 });
 
-let ws = null;
+let client = null;
 
 onMounted(async () => {
-  const root = await protobuf.load('/proto/data.proto');
+  // 加载 proto 文件
+  const root = await protobuf.load('/src/proto/data.proto');
   const DataStream = root.lookupType('streamdash.DataStream');
 
-  ws = new WebSocket('ws://localhost:8080/data'); // 临时用 WebSocket，后续改为 gRPC-Web
-  ws.binaryType = 'arraybuffer';
-  ws.onmessage = (event) => {
-    const buffer = new Uint8Array(event.data);
-    const message = DataStream.decode(buffer);
-    message.points.forEach(point => {
-      chartOption.value.xAxis.data.push(point.timestamp);
-      chartOption.value.series[0].data.push(point.value);
+  // 构造服务定义
+  const StreamServiceDefinition = {
+    serviceName: 'streamdash.StreamService', // 必须匹配 proto 中的服务名
+    StreamData: {
+      methodName: 'StreamData',
+      service: { serviceName: 'streamdash.StreamService' }, // 服务名
+      requestStream: false, // 单向流
+      responseStream: true, // 服务器流
+      requestType: DataStream,
+      responseType: DataStream
+    }
+  };
+
+  client = grpc.client(StreamServiceDefinition.StreamData, {
+    host: 'http://localhost:8080',
+    transport: grpc.WebsocketTransport()
+  });
+
+  client.onMessage((message) => {
+    const points = message.getPointsList();
+    points.forEach(point => {
+      chartOption.value.xAxis.data.push(point.getTimestamp());
+      chartOption.value.series[0].data.push(point.getValue());
     });
     if (chartOption.value.xAxis.data.length > 20) {
       chartOption.value.xAxis.data.shift();
       chartOption.value.series[0].data.shift();
     }
     chartOption.value = { ...chartOption.value };
-  };
+  });
+
+  client.onEnd((status, statusMessage) => {
+    console.log('gRPC stream ended:', status, statusMessage);
+  });
+
+  client.
+
+  // client.onError((err) => {
+  //   console.error('gRPC error:', err);
+  // });
+
+  client.start();
 });
 
 onUnmounted(() => {
-  if (ws) ws.close();
+  // if (client) client.finish();
 });
 </script>
 
